@@ -1,0 +1,13 @@
+mkdir project
+cd project
+https://github.com/nguyenphantuanduy/FitMe.git
+sudo apt update
+sudo apt install python3-venv -y
+python3 -m venv venv
+source venv/bin/activate
+apt install -y libgl1
+pip install --upgrade pip
+cd fashn_vton_1_5
+pip install -e .
+cd ..
+python fashn_vton_1_5/scripts/download_weights.py --weights-dir ./weights/fashn_vton_weights
