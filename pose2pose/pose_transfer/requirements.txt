@@ -1,0 +1,26 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
+
+# Core DL
+torch
+torchvision
+
+# Data & math
+numpy
+scipy
+pandas
+
+# Image processing
+opencv-contrib-python
+pillow
+scikit-image
+
+# Logging / metrics
+tensorboard
+lpips
+
+# Backend (nếu dùng API)
+flask
+flask-cors
+
+# Pose estimation
+git+https://github.com/prasunroy/openpose-pytorch.git
