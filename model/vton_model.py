@@ -62,7 +62,7 @@ if __name__ == "__main__":
     # ==== Cấu hình model ====
     config = FashnVtonModelConfig(
         weights_dir="./weights/fashn_vton_weights",  # sửa đường dẫn nếu cần
-        num_timesteps=12,
+        num_timesteps=30,
         num_samples=1
     )
     model = FashnVtonModel(config)
@@ -70,8 +70,8 @@ if __name__ == "__main__":
     # ==== Đường dẫn input ====
     person_path = "./person.jpg"
     garments_info = [
-        ("./T_shirt.webp", "tops"),
-        ("./jogger.webp", "bottoms"),
+        ("./white_suit.jpg", "tops"),
+        ("./white_suit.jpg", "bottoms"),
         # thêm garment khác nếu muốn
     ]
 
@@ -87,6 +87,6 @@ if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
 
     # ==== Lưu kết quả ====
-    output_path = os.path.join(output_dir, "result.png")
+    output_path = os.path.join(output_dir, "result_1.png")
     result.save(output_path)
     print(f"Saved result to {output_path}")
