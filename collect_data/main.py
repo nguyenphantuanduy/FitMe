@@ -271,6 +271,7 @@ if __name__ == "__main__":
     #     project_name="human-back-views-only-js9pt",
     # )
     # add_back_dataset_to_class0()
+    print_class_distribution("./human_front_back_final")
                 
 
     
