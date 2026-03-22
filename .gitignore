@@ -211,4 +211,7 @@ weights/
 
 # Dataset folders
 collect_data/human-front-1/
+collect_data/human_front_back/
 collect_data/human-back-views-only-1/
+human_front_back_final/
+

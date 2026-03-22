@@ -1,0 +1,10 @@
+chạy:
+
+collect_data -> count_img -> preprocessing -> data_splitter
+
+kết quả: human_front_back_final
+
+requirement: 
+sklearn
+albumentations
+cv2
