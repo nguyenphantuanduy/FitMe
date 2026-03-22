@@ -197,10 +197,80 @@ def print_class_distribution(root_path="./human_front_back"):
         print(f"  class 0: {p0:.2f}%")
         print(f"  class 1: {p1:.2f}%")
 
+import shutil
+from pathlib import Path
+
+
+def add_back_dataset_to_class0(
+    src_root="./human-back-views-only-1",
+    dst_root="./human_front_back"
+):
+    """
+    Lấy ảnh từ dataset back-only
+    và add vào class 0 của dataset classification.
+
+    Args:
+        src_root: dataset mới download
+        dst_root: dataset classification chính
+    """
+
+    src_root = Path(src_root)
+    dst_root = Path(dst_root)
+
+    splits = ["train", "valid", "test"]
+
+    print("\n➕ Adding BACK dataset to class 0...\n")
+
+    for split in splits:
+
+        src_images = src_root / split / "images"
+
+        dst_class0 = dst_root / split / "0"
+
+        if not src_images.exists():
+            print(f"{split}: no images folder")
+            continue
+
+        dst_class0.mkdir(parents=True, exist_ok=True)
+
+        image_files = list(src_images.glob("*.*"))
+
+        added = 0
+
+        for img_path in image_files:
+
+            dst_img_path = dst_class0 / img_path.name
+
+            # tránh overwrite nếu trùng tên
+            if dst_img_path.exists():
+
+                new_name = (
+                    img_path.stem
+                    + "_back"
+                    + img_path.suffix
+                )
+
+                dst_img_path = dst_class0 / new_name
+
+            shutil.copy(img_path, dst_img_path)
+
+            added += 1
+
+        print(f"{split}: added {added} images")
+
+    print("\n✅ Done adding BACK dataset!")
+
 # Chạy trực tiếp file
 if __name__ == "__main__":
     # download_data()
     # collect_data()
-    print_class_distribution()
+    # print_class_distribution()
+    # download_data(
+    #     api_key="inr9jRHmkEY62398BiMk",
+    #     workspace="duys-workspace-4jeqe",
+    #     project_name="human-back-views-only-js9pt",
+    # )
+    # add_back_dataset_to_class0()
+                
 
     
