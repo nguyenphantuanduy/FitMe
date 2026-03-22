@@ -12,3 +12,16 @@ cd fashn_vton_1_5
 pip install -e .
 cd ..
 python fashn_vton_1_5/scripts/download_weights.py --weights-dir ./weights/fashn_vton_weights
+
+DROP TABLE fitme_db.users;
+CREATE TABLE fitme_db.users (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    address VARCHAR(255),
+    id_card VARCHAR(20),
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

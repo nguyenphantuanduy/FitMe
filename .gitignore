@@ -208,3 +208,7 @@ __marimo__/
 
 # Weights (rất quan trọng)
 weights/
+
+# Dataset folders
+collect_data/human-front-1/
+collect_data/human_front_back/

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from PIL import Image
-from config.vton_model_config import FashnVtonModelConfig
-from fashn_vton_1_5.src.fashn_vton.pipeline import TryOnPipeline
+from ..config.vton_model_config import FashnVtonModelConfig
+from ..fashn_vton_1_5.src.fashn_vton.pipeline import TryOnPipeline
 from typing import Literal, Tuple, List
 
 class VTonModel(ABC):
@@ -55,9 +55,6 @@ class FashnVtonModel(VTonModel):
 
 
 import os
-from PIL import Image
-from config.vton_model_config import FashnVtonModelConfig
-
 if __name__ == "__main__":
     # ==== Cấu hình model ====
     config = FashnVtonModelConfig(
@@ -70,8 +67,8 @@ if __name__ == "__main__":
     # ==== Đường dẫn input ====
     person_path = "./person.jpg"
     garments_info = [
-        ("./white_suit.jpg", "tops"),
-        ("./white_suit.jpg", "bottoms"),
+        ("./T_shirt.webp", "tops"),
+        ("./jogger.webp", "bottoms"),
         # thêm garment khác nếu muốn
     ]
 
