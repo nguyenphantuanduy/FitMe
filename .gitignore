@@ -213,4 +213,4 @@ weights/
 human-front-1/
 human_front_back/
 human-back-views-only-1/
-
+**/node_modules/
