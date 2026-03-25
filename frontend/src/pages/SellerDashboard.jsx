@@ -14,12 +14,14 @@ function SellerDashboard() {
           "http://localhost:3000/api/seller/products",
           { withCredentials: true },
         );
+
         setProducts(res.data.products || []);
       } catch (err) {
         console.error("Lỗi khi lấy sản phẩm:", err);
         alert("Không thể lấy danh sách sản phẩm");
       }
     };
+
     fetchProducts();
   }, []);
 
@@ -34,6 +36,7 @@ function SellerDashboard() {
         }}
       >
         <h2>Seller Dashboard</h2>
+
         <div>
           <button
             style={{ marginRight: "10px" }}
@@ -41,6 +44,7 @@ function SellerDashboard() {
           >
             Customer Dashboard
           </button>
+
           <button onClick={() => navigate("/upload-product")}>
             Upload Product
           </button>
@@ -48,6 +52,7 @@ function SellerDashboard() {
       </div>
 
       <h3>Sản phẩm đang bán:</h3>
+
       {products.length === 0 ? (
         <p>Chưa có sản phẩm nào</p>
       ) : (
@@ -61,35 +66,57 @@ function SellerDashboard() {
         >
           {products.map((p) => (
             <div
-              key={p.uuid}
+              key={`${p.seller_uuid}-${p.product_id}`}
               className="product-card"
               style={{
                 border: "1px solid #ccc",
                 borderRadius: "8px",
                 padding: "15px",
-                width: "250px", // tăng chiều ngang card
+                width: "260px",
                 boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
               }}
             >
+              {/* FRONT IMAGE */}
               <img
-                src={p.img}
+                src={p.front_img}
                 alt={p.name}
                 style={{
                   width: "200px",
                   height: "200px",
                   objectFit: "cover",
                   borderRadius: "6px",
-                  marginBottom: "10px",
+                  marginBottom: "8px",
                 }}
               />
+
+              {/* BACK IMAGE */}
+              {p.back_img && (
+                <img
+                  src={p.back_img}
+                  alt={p.name}
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    objectFit: "cover",
+                    borderRadius: "6px",
+                    marginBottom: "10px",
+                  }}
+                />
+              )}
+
               <div style={{ textAlign: "center" }}>
                 <h4>{p.name}</h4>
+
                 <p>{p.description}</p>
+
                 <p>Giá: {Number(p.cost).toLocaleString()}₫</p>
+
                 <p>Loại: {p.type}</p>
+
+                <p>ID: {p.product_id}</p>
               </div>
             </div>
           ))}

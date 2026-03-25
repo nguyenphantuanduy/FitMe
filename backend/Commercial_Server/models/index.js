@@ -1,12 +1,17 @@
 const Seller = require("./Seller");
 const Product = require("./Product");
-const Sell = require("./Sell");
 
-// Quan hệ
-Seller.hasMany(Sell, { foreignKey: "seller_uuid" });
-Sell.belongsTo(Seller, { foreignKey: "seller_uuid" });
+// Seller có nhiều Product
+Seller.hasMany(Product, {
+  foreignKey: "seller_uuid",
+  sourceKey: "user_uuid",
+  onDelete: "CASCADE",
+});
 
-Product.hasMany(Sell, { foreignKey: "product_uuid" });
-Sell.belongsTo(Product, { foreignKey: "product_uuid" });
+// Product thuộc về Seller
+Product.belongsTo(Seller, {
+  foreignKey: "seller_uuid",
+  targetKey: "user_uuid",
+});
 
-module.exports = { Seller, Product, Sell };
+module.exports = { Seller, Product };

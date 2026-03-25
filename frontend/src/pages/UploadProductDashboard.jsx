@@ -1,4 +1,3 @@
-// src/pages/UploadProductDashboard.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,40 +9,63 @@ function UploadProductDashboard() {
   const [description, setDescription] = useState("");
   const [cost, setCost] = useState("");
   const [type, setType] = useState("tops");
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
 
-  // Handle upload file
-  const handleFileChange = (e) => {
-    const f = e.target.files[0];
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
+  const [frontFile, setFrontFile] = useState(null);
+  const [backFile, setBackFile] = useState(null);
+
+  const [frontPreview, setFrontPreview] = useState(null);
+  const [backPreview, setBackPreview] = useState(null);
+
+  // ===== FRONT IMAGE =====
+
+  const handleFrontChange = (e) => {
+    const file = e.target.files[0];
+    setFrontFile(file);
+    setFrontPreview(URL.createObjectURL(file));
   };
 
-  // Reset form
+  // ===== BACK IMAGE =====
+
+  const handleBackChange = (e) => {
+    const file = e.target.files[0];
+    setBackFile(file);
+    setBackPreview(URL.createObjectURL(file));
+  };
+
+  // ===== RESET =====
+
   const handleReset = () => {
     setName("");
     setDescription("");
     setCost("");
     setType("tops");
-    setFile(null);
-    setPreview(null);
+
+    setFrontFile(null);
+    setBackFile(null);
+
+    setFrontPreview(null);
+    setBackPreview(null);
   };
 
-  // Upload product
+  // ===== UPLOAD =====
+
   const handleUpload = async () => {
-    if (!name || !cost || !type || !file) {
-      alert("Vui lòng điền đầy đủ thông tin và chọn ảnh");
+    if (!name || !cost || !type || !frontFile || !backFile) {
+      alert("Vui lòng điền đầy đủ thông tin và chọn 2 ảnh");
       return;
     }
 
     try {
       const formData = new FormData();
+
       formData.append("name", name);
       formData.append("description", description);
       formData.append("cost", cost);
       formData.append("type", type);
-      formData.append("image", file); // phải trùng với backend
+
+      // ⚠️ TÊN PHẢI TRÙNG BACKEND
+      formData.append("front", frontFile);
+      formData.append("back", backFile);
 
       const res = await axios.post(
         "http://localhost:3000/api/seller/products",
@@ -51,10 +73,12 @@ function UploadProductDashboard() {
         { withCredentials: true },
       );
 
-      alert("Upload thành công: " + res.data.product.name);
+      alert("Upload thành công!");
+
       handleReset();
     } catch (err) {
       console.error(err.response?.data || err);
+
       alert("Upload thất bại: " + (err.response?.data?.message || err.message));
     }
   };
@@ -63,12 +87,12 @@ function UploadProductDashboard() {
     <div className="page-container">
       <h2>Upload Product</h2>
 
-      <div className="form-group">
+      <div>
         <label>Tên sản phẩm:</label>
         <input value={name} onChange={(e) => setName(e.target.value)} />
       </div>
 
-      <div className="form-group">
+      <div>
         <label>Mô tả:</label>
         <textarea
           value={description}
@@ -76,7 +100,7 @@ function UploadProductDashboard() {
         />
       </div>
 
-      <div className="form-group">
+      <div>
         <label>Giá:</label>
         <input
           type="number"
@@ -85,8 +109,9 @@ function UploadProductDashboard() {
         />
       </div>
 
-      <div className="form-group">
+      <div>
         <label>Loại:</label>
+
         <select value={type} onChange={(e) => setType(e.target.value)}>
           <option value="tops">Tops</option>
           <option value="bottoms">Bottoms</option>
@@ -94,16 +119,43 @@ function UploadProductDashboard() {
         </select>
       </div>
 
-      <div className="form-group">
-        <label>Ảnh sản phẩm:</label>
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        {preview && <img src={preview} alt="Preview" width={150} />}
+      {/* FRONT IMAGE */}
+
+      <div>
+        <label>Front Image:</label>
+
+        <input type="file" accept="image/*" onChange={handleFrontChange} />
+
+        {frontPreview && (
+          <img src={frontPreview} alt="Front Preview" width={150} />
+        )}
       </div>
 
-      {/* ========== BUTTONS ========== */}
-      <div className="form-buttons">
+      {/* BACK IMAGE */}
+
+      <div>
+        <label>Back Image:</label>
+
+        <input type="file" accept="image/*" onChange={handleBackChange} />
+
+        {backPreview && (
+          <img src={backPreview} alt="Back Preview" width={150} />
+        )}
+      </div>
+
+      {/* BUTTONS */}
+
+      <div
+        style={{
+          marginTop: "20px",
+          display: "flex",
+          gap: "10px",
+        }}
+      >
         <button onClick={handleUpload}>Upload</button>
+
         <button onClick={handleReset}>Reset</button>
+
         <button onClick={() => navigate("/seller-dashboard")}>
           Quay lại Dashboard
         </button>

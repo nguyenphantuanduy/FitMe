@@ -1,23 +1,39 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 function CustomerDashboard({ userRole }) {
   const navigate = useNavigate();
 
-  const handleGoSeller = async () => {
+  const handleGoSeller = () => {
     if (userRole === "seller") {
       navigate("/seller-dashboard");
     } else {
-      // Chưa phải seller → chuyển sang trang đăng ký seller
       navigate("/register-seller");
     }
+  };
+
+  // ⭐ NEW
+  const handleVirtualTryOn = () => {
+    navigate("/virtual-tryon");
   };
 
   return (
     <div className="page-container">
       <h2>Customer Dashboard</h2>
-      <button onClick={handleGoSeller}>Seller Dashboard</button>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginTop: "20px",
+        }}
+      >
+        <button onClick={handleGoSeller}>Seller Dashboard</button>
+
+        {/* ⭐ NEW BUTTON */}
+
+        <button onClick={handleVirtualTryOn}>Virtual Try-on</button>
+      </div>
     </div>
   );
 }

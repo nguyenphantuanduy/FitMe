@@ -67,7 +67,7 @@ if __name__ == "__main__":
     # ==== Đường dẫn input ====
     person_path = "./person.jpg"
     garments_info = [
-        ("./T_shirt.webp", "tops"),
+        ("./white_suit.jpg", "tops"),
         ("./jogger.webp", "bottoms"),
         # thêm garment khác nếu muốn
     ]
@@ -84,6 +84,6 @@ if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
 
     # ==== Lưu kết quả ====
-    output_path = os.path.join(output_dir, "result_1.png")
+    output_path = os.path.join(output_dir, "result_2.png")
     result.save(output_path)
     print(f"Saved result to {output_path}")

@@ -16,9 +16,12 @@ import SellerDashboard from "./pages/SellerDashboard";
 import RegisterSeller from "./pages/RegisterSeller";
 import UploadProductDashboard from "./pages/UploadProductDashboard";
 
+// ⭐ NEW
+import VirtualTryOn from "./pages/VirtualTryOn";
+
 function App() {
   const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true); // <--- trạng thái loading khi kiểm tra JWT
+  const [loading, setLoading] = useState(true);
 
   // Kiểm tra JWT cookie khi App load
   useEffect(() => {
@@ -27,35 +30,46 @@ function App() {
         const res = await axios.get("http://localhost:3000/api/auth/me", {
           withCredentials: true,
         });
-        setUserRole(res.data.user.role); // cập nhật role nếu JWT hợp lệ
+
+        setUserRole(res.data.user.role);
       } catch {
-        setUserRole(null); // chưa login hoặc JWT không hợp lệ
+        setUserRole(null);
       } finally {
-        setLoading(false); // đã kiểm tra xong
+        setLoading(false);
       }
     };
+
     checkUser();
   }, []);
 
-  // Component bảo vệ route theo role
+  // =========================
+  // Protected Route
+  // =========================
+
   const ProtectedRoute = ({ role, children }) => {
-    if (loading) return <div>Loading...</div>; // <--- chờ check JWT xong
-    if (!userRole) return <Navigate to="/login" replace />; // chưa login
-    if (role && userRole !== role) return <Navigate to="/" replace />; // role không phù hợp
+    if (loading) return <div>Loading...</div>;
+
+    if (!userRole) return <Navigate to="/login" replace />;
+
+    if (role && userRole !== role) return <Navigate to="/" replace />;
+
     return children;
   };
 
   return (
     <Router>
       <Routes>
-        {/* Trang Home */}
+        {/* Home */}
         <Route path="/" element={<Home />} />
 
         {/* Login / Register */}
+
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
+
         <Route path="/register" element={<Register />} />
 
         {/* Customer Dashboard */}
+
         <Route
           path="/customer-dashboard"
           element={
@@ -65,7 +79,19 @@ function App() {
           }
         />
 
+        {/* ⭐ Virtual Try-on */}
+
+        <Route
+          path="/virtual-tryon"
+          element={
+            <ProtectedRoute>
+              <VirtualTryOn />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Seller Dashboard */}
+
         <Route
           path="/seller-dashboard"
           element={
@@ -75,7 +101,8 @@ function App() {
           }
         />
 
-        {/* Upload Product Dashboard */}
+        {/* Upload Product */}
+
         <Route
           path="/upload-product"
           element={
@@ -85,13 +112,15 @@ function App() {
           }
         />
 
-        {/* Đăng ký Seller */}
+        {/* Register Seller */}
+
         <Route
           path="/register-seller"
           element={<RegisterSeller setUserRole={setUserRole} />}
         />
 
-        {/* Fallback route */}
+        {/* Fallback */}
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
