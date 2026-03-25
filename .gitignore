@@ -207,9 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 # Weights (rất quan trọng)
-weights/
-!weights/efficentNetb1/
-
+weights/RAFT/
+weights/fashn_vton_weights/
+weights/mobileNetv3/
 # Dataset folders
 human-front-1/
 human_front_back/
