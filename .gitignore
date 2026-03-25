@@ -208,6 +208,7 @@ __marimo__/
 
 # Weights (rất quan trọng)
 weights/
+!weights/efficentNetb1/
 
 # Dataset folders
 human-front-1/
