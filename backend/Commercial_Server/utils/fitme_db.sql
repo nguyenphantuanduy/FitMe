@@ -21,17 +21,27 @@ CREATE TABLE seller (
     shop_description TEXT,
     joined_at TIMESTAMP DEFAULT NOW()
 );
+
 CREATE TABLE product (
-    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    seller_uuid UUID NOT NULL,
+
+    product_id INTEGER NOT NULL,
+
     name VARCHAR(100) NOT NULL,
     description TEXT,
+
     cost NUMERIC(10,2) NOT NULL,
-    img_path TEXT,
-    type product_type NOT NULL
-);
-CREATE TABLE sell (
-    seller_uuid UUID REFERENCES seller(user_uuid) ON DELETE CASCADE,
-    product_uuid UUID REFERENCES product(uuid) ON DELETE CASCADE,
+
+    front_img_path TEXT,
+    back_img_path TEXT,
+
+    type product_type NOT NULL,
+
     sell_date TIMESTAMP DEFAULT NOW(),
-    PRIMARY KEY (seller_uuid, product_uuid)
+
+    PRIMARY KEY (seller_uuid, product_id),
+
+    FOREIGN KEY (seller_uuid)
+        REFERENCES seller(user_uuid)
+        ON DELETE CASCADE
 );
