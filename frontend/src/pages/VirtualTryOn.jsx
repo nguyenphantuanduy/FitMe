@@ -8,14 +8,17 @@ function VirtualTryOnAdvanced() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // trạng thái scan
   const scanningRef = useRef(false);
-
-  const navigate = useNavigate();
+  const aiRunningRef = useRef(false);
 
   // =========================
-  // Product state
+  // STATES
   // =========================
+  const [cameraStream, setCameraStream] = useState(null);
+  const [aiResult, setAiResult] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [scanningEffect, setScanningEffect] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   const [tops, setTops] = useState([]);
   const [bottoms, setBottoms] = useState([]);
@@ -29,53 +32,50 @@ function VirtualTryOnAdvanced() {
   const [showBottoms, setShowBottoms] = useState(false);
   const [showOnePieces, setShowOnePieces] = useState(false);
 
-  // =========================
-  // AI result
-  // =========================
-
-  const [aiResult, setAiResult] = useState(null);
+  const navigate = useNavigate();
 
   // =========================
-  // Camera
+  // CAMERA
   // =========================
-
-  const [scanning, setScanning] = useState(false);
-  const [cameraStream, setCameraStream] = useState(null);
-
   const startCamera = async () => {
-    try {
-      console.log("🎥 Starting camera...");
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-
-      videoRef.current.srcObject = stream;
-      setCameraStream(stream);
-
-      await new Promise((resolve) => {
-        videoRef.current.onloadedmetadata = () => {
-          resolve();
-        };
-      });
-
-      console.log("✅ Camera ready");
-    } catch (err) {
-      console.error("Camera error:", err);
-    }
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    videoRef.current.srcObject = stream;
+    await new Promise((resolve) => {
+      videoRef.current.onloadedmetadata = resolve;
+    });
+    setCameraStream(stream);
   };
 
   const stopCamera = () => {
     if (cameraStream) {
-      cameraStream.getTracks().forEach((track) => track.stop());
+      cameraStream.getTracks().forEach((t) => t.stop());
       setCameraStream(null);
     }
   };
 
   // =========================
-  // Convert URL -> File
+  // CAPTURE
   // =========================
+  const captureFrame = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
 
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, "image/jpeg");
+    });
+  };
+
+  // =========================
+  // FETCH FILE
+  // =========================
   const fetchFileFromUrl = async (url, filename) => {
     const res = await fetch(url);
     const blob = await res.blob();
@@ -83,229 +83,247 @@ function VirtualTryOnAdvanced() {
   };
 
   // =========================
-  // Capture frame
+  // SEND AI
   // =========================
+  const sendToAI = async (personBlob) => {
+    aiRunningRef.current = true;
+    setAiLoading(true);
 
-  const captureAndSend = async () => {
-    if (!scanningRef.current) return;
-
-    const canvas = canvasRef.current;
-
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
-    console.log("📸 Capturing frame...");
-
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-
-      console.log("📤 Sending to AI...");
-
-      await sendToServer(blob);
-    }, "image/jpeg");
-  };
-
-  // =========================
-  // Scan effect 10s
-  // =========================
-
-  const runScanEffect = () => {
-    return new Promise((resolve) => {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-
-      let y = 0;
-
-      const interval = setInterval(() => {
-        if (!scanningRef.current) {
-          clearInterval(interval);
-          resolve();
-          return;
-        }
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "rgba(0,255,0,0.25)";
-
-        ctx.fillRect(0, y, canvas.width, 20);
-
-        y += 10;
-
-        if (y > canvas.height) {
-          y = 0;
-        }
-      }, 30);
-
-      setTimeout(() => {
-        clearInterval(interval);
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        resolve();
-      }, 10000);
-    });
-  };
-
-  // =========================
-  // Send to AI server
-  // =========================
-
-  const sendToServer = async (personBlob) => {
     const formData = new FormData();
-
     formData.append("person_img", personBlob, "person.jpg");
 
-    if (selectedTop) {
-      const front = await fetchFileFromUrl(
-        selectedTop.front_img,
-        "top_front.jpg",
-      );
+    const appendGarment = async (selected, type) => {
+      if (!selected) return;
+      if (selected.front_img) {
+        const frontFile = await fetchFileFromUrl(
+          selected.front_img,
+          `${type}_front.jpg`,
+        );
+        formData.append(`${type}_front`, frontFile);
+      }
+      if (selected.back_img) {
+        const backFile = await fetchFileFromUrl(
+          selected.back_img,
+          `${type}_back.jpg`,
+        );
+        formData.append(`${type}_back`, backFile);
+      }
+    };
 
-      formData.append("tops_front", front);
-    }
-
-    if (selectedBottom) {
-      const front = await fetchFileFromUrl(
-        selectedBottom.front_img,
-        "bottom_front.jpg",
-      );
-
-      formData.append("bottoms_front", front);
-    }
-
-    if (selectedOnePiece) {
-      const front = await fetchFileFromUrl(
-        selectedOnePiece.front_img,
-        "onepiece_front.jpg",
-      );
-
-      formData.append("onepieces_front", front);
-    }
+    await appendGarment(selectedTop, "tops");
+    await appendGarment(selectedBottom, "bottoms");
+    await appendGarment(selectedOnePiece, "onepieces");
 
     try {
       const res = await axios.post(
         "http://localhost:8000/vton/generate",
         formData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          responseType: "blob",
-        },
+        { responseType: "blob", withCredentials: true },
       );
 
-      console.log("✅ AI result received");
-
+      if (aiResult) URL.revokeObjectURL(aiResult);
       setAiResult(URL.createObjectURL(res.data));
-
-      // chạy hiệu ứng quét 10s
-
-      await runScanEffect();
-
-      // capture tiếp
-
-      captureAndSend();
     } catch (err) {
-      console.error("❌ AI error:", err);
-
-      setTimeout(() => {
-        captureAndSend();
-      }, 5000);
+      console.error("Error sending to AI:", err);
+    } finally {
+      setAiLoading(false);
+      aiRunningRef.current = false;
     }
   };
 
   // =========================
-  // Start / Stop
+  // LOOP + Countdown
   // =========================
+  const runLoop = async () => {
+    while (scanningRef.current) {
+      setScanningEffect(true);
 
+      for (let i = 10; i >= 1; i--) {
+        setCountdown(i);
+        await new Promise((r) => setTimeout(r, 1000));
+        if (!scanningRef.current) break;
+      }
+
+      setCountdown(0);
+      setScanningEffect(false);
+
+      if (!scanningRef.current) break;
+
+      const blob = await captureFrame();
+      await sendToAI(blob);
+    }
+  };
+
+  // =========================
+  // START / STOP
+  // =========================
   const startTryOn = async () => {
-    console.log("▶️ Start Try-On");
-
-    if (!cameraStream) {
-      await startCamera();
+    if (!selectedTop && !selectedBottom && !selectedOnePiece) {
+      alert("Hãy chọn ít nhất 1 sản phẩm trước!");
+      return;
     }
 
+    if (!cameraStream) await startCamera();
     scanningRef.current = true;
-    setScanning(true);
-
-    captureAndSend();
+    runLoop();
   };
 
   const stopTryOn = () => {
-    console.log("⏹ Stop Try-On");
-
     scanningRef.current = false;
-    setScanning(false);
-
     stopCamera();
   };
 
   // =========================
-  // Fetch products
+  // FETCH PRODUCTS
   // =========================
-
   const fetchProducts = async (type) => {
+    if (scanningRef.current) {
+      alert("Stop Try-On trước khi chọn lại!");
+      return;
+    }
     try {
       const res = await axios.get(
         `http://localhost:3000/api/products/${type}`,
         { withCredentials: true },
       );
-
       if (type === "tops") {
         setTops(res.data.products);
         setShowTops(true);
-      } else if (type === "bottoms") {
+      }
+      if (type === "bottoms") {
         setBottoms(res.data.products);
         setShowBottoms(true);
-      } else if (type === "one-pieces") {
+      }
+      if (type === "one-pieces") {
         setOnePieces(res.data.products);
         setShowOnePieces(true);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Không tải được sản phẩm");
     }
   };
 
   // =========================
-  // Select / reset
+  // SELECT
   // =========================
-
-  const handleSelect = (product, type) => {
-    if (type === "tops") setSelectedTop(product);
-
-    if (type === "bottoms") setSelectedBottom(product);
-
-    if (type === "one-pieces") setSelectedOnePiece(product);
+  const handleSelect = (p, type) => {
+    if (type === "tops") setSelectedTop(p);
+    if (type === "bottoms") setSelectedBottom(p);
+    if (type === "one-pieces") setSelectedOnePiece(p);
 
     setShowTops(false);
     setShowBottoms(false);
     setShowOnePieces(false);
   };
 
-  const handleReset = (type) => {
-    if (type === "tops") setSelectedTop(null);
+  // =========================
+  // SCAN EFFECT
+  // =========================
+  const ScanOverlay = () => {
+    if (!scanningEffect) return null;
 
-    if (type === "bottoms") setSelectedBottom(null);
-
-    if (type === "one-pieces") setSelectedOnePiece(null);
+    return (
+      <>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+            background:
+              "linear-gradient(to bottom, transparent, rgba(0,255,0,0.3), transparent)",
+            animation: "scanMove 2s linear infinite",
+          }}
+        />
+        {countdown > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              fontSize: 64,
+              color: "lime",
+              fontWeight: "bold",
+              textShadow: "2px 2px 4px black",
+            }}
+          >
+            {countdown}
+          </div>
+        )}
+      </>
+    );
   };
 
   // =========================
-  // Render helpers
+  // AI RESULT RENDER
   // =========================
+  const renderAIResult = () => {
+    if (aiLoading) {
+      return (
+        <div
+          style={{
+            width: 420,
+            height: 420,
+            borderRadius: 12,
+            border: "1px solid #ddd",
+            background: "linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%)",
+            backgroundSize: "200% 100%",
+            animation: "shimmer 1.5s infinite",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "bold",
+            fontSize: 20,
+            color: "#555",
+            textAlign: "center",
+            padding: 10,
+          }}
+        >
+          FitMe Virtual Try-On <br /> Loading, please wait...
+        </div>
+      );
+    }
 
+    if (aiResult) {
+      return (
+        <img
+          src={aiResult}
+          width={420}
+          height={420}
+          style={{ borderRadius: 12, border: "1px solid #ddd" }}
+        />
+      );
+    }
+
+    return (
+      <div
+        style={{
+          width: 420,
+          height: 420,
+          border: "2px dashed #ccc",
+          borderRadius: 12,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        AI Result
+      </div>
+    );
+  };
+
+  // =========================
+  // GRID SELECTOR
+  // =========================
   const renderSelector = (products, type) => (
     <div
       style={{
-        display: "flex",
-        gap: 10,
-        overflowX: "auto",
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: 8,
         marginTop: 10,
       }}
     >
@@ -313,162 +331,146 @@ function VirtualTryOnAdvanced() {
         <img
           key={p.product_id}
           src={p.front_img}
-          alt={p.name}
-          width={100}
-          style={{
-            cursor: "pointer",
-            borderRadius: 6,
-          }}
+          width={90}
+          style={{ cursor: "pointer", borderRadius: 6 }}
           onClick={() => handleSelect(p, type)}
         />
       ))}
     </div>
   );
 
-  const renderPreview = (selected, type) => {
-    if (!selected) return null;
-
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <img
-          src={selected.front_img}
-          width={100}
-          style={{
-            marginBottom: 5,
-          }}
-        />
-
-        <button onClick={() => handleReset(type)}>Reset</button>
-      </div>
-    );
-  };
-
   // =========================
-  // JSX
+  // UI
   // =========================
-
   return (
     <div style={{ padding: 20 }}>
       <h2>Virtual Try-on</h2>
 
-      <button
-        onClick={() => navigate("/customer-dashboard")}
-        style={{ marginBottom: 20 }}
-      >
-        ← Back to Customer Dashboard
-      </button>
-
       <div style={{ marginBottom: 20 }}>
-        {!scanning ? (
-          <button onClick={startTryOn}>Start Try-On</button>
+        {!scanningRef.current ? (
+          <button onClick={startTryOn}>Start Virtual Try-On</button>
         ) : (
-          <button onClick={stopTryOn}>Stop Try-On</button>
+          <button onClick={stopTryOn}>Stop Virtual Try-On</button>
         )}
+        <button
+          style={{ marginLeft: 10 }}
+          onClick={() => navigate("/customer-dashboard")}
+        >
+          Back to Dashboard
+        </button>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: 30,
-          alignItems: "flex-start",
-        }}
-      >
-        {/* Camera */}
-
-        <div style={{ position: "relative" }}>
-          <video
-            ref={videoRef}
-            autoPlay
-            width={500}
-            height={500}
-            style={{
-              borderRadius: 12,
-            }}
-          />
-
-          <canvas
-            ref={canvasRef}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              pointerEvents: "none",
-            }}
-          />
-        </div>
-
-        {/* AI Result */}
-
+      <div style={{ display: "flex", gap: 20, justifyContent: "center" }}>
+        {/* AI */}
         <div>
-          {aiResult ? (
-            <img src={aiResult} alt="AI Result" width={500} height={500} />
-          ) : (
-            <div
-              style={{
-                width: 500,
-                height: 500,
-                border: "2px dashed #ccc",
-                borderRadius: 12,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              AI Result
-            </div>
-          )}
+          <h3>AI Result</h3>
+          {renderAIResult()}
         </div>
 
-        {/* Products */}
+        {/* CAMERA */}
+        <div>
+          <h3>Camera</h3>
+          <div style={{ position: "relative" }}>
+            <video
+              ref={videoRef}
+              autoPlay
+              width={420}
+              height={420}
+              style={{ borderRadius: 12, border: "1px solid #ddd" }}
+            />
+            <canvas ref={canvasRef} style={{ display: "none" }} />
+            <ScanOverlay />
+          </div>
+        </div>
 
+        {/* PRODUCT PANEL */}
         <div
           style={{
+            width: 240,
             display: "flex",
             flexDirection: "column",
             gap: 20,
+            height: 440,
+            overflowY: "auto",
+            background: "rgba(0,0,0,0.5)",
+            padding: 15,
+            borderRadius: 12,
+            pointerEvents: scanningRef.current ? "none" : "auto",
+            opacity: scanningRef.current ? 0.5 : 1,
+            transition: "opacity 0.3s ease",
           }}
         >
+          <h3>Choose Product</h3>
+
           <div>
-            <h3>Tops</h3>
-
-            {renderPreview(selectedTop, "tops")}
-
-            <button onClick={() => fetchProducts("tops")}>Choose Tops</button>
-
+            <h4>Tops</h4>
+            {selectedTop && (
+              <img
+                src={selectedTop.front_img}
+                width={90}
+                style={{ marginBottom: 8, borderRadius: 6 }}
+              />
+            )}
+            <button
+              disabled={scanningRef.current}
+              onClick={() => fetchProducts("tops")}
+            >
+              Choose Tops
+            </button>
             {showTops && renderSelector(tops, "tops")}
           </div>
 
           <div>
-            <h3>Bottoms</h3>
-
-            {renderPreview(selectedBottom, "bottoms")}
-
-            <button onClick={() => fetchProducts("bottoms")}>
+            <h4>Bottoms</h4>
+            {selectedBottom && (
+              <img
+                src={selectedBottom.front_img}
+                width={90}
+                style={{ marginBottom: 8, borderRadius: 6 }}
+              />
+            )}
+            <button
+              disabled={scanningRef.current}
+              onClick={() => fetchProducts("bottoms")}
+            >
               Choose Bottoms
             </button>
-
             {showBottoms && renderSelector(bottoms, "bottoms")}
           </div>
 
           <div>
-            <h3>One-piece</h3>
-
-            {renderPreview(selectedOnePiece, "one-pieces")}
-
-            <button onClick={() => fetchProducts("one-pieces")}>
+            <h4>One-piece</h4>
+            {selectedOnePiece && (
+              <img
+                src={selectedOnePiece.front_img}
+                width={90}
+                style={{ marginBottom: 8, borderRadius: 6 }}
+              />
+            )}
+            <button
+              disabled={scanningRef.current}
+              onClick={() => fetchProducts("one-pieces")}
+            >
               Choose One-piece
             </button>
-
             {showOnePieces && renderSelector(onePieces, "one-pieces")}
           </div>
         </div>
       </div>
+
+      {/* SCAN CSS + SHIMMER */}
+      <style>
+        {`
+        @keyframes scanMove {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        `}
+      </style>
     </div>
   );
 }
