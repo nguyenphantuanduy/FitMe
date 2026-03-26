@@ -3,6 +3,7 @@ const Customer = require("../models/Customer");
 const Seller = require("../models/Seller");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); // thêm JWT
+const { Op } = require("sequelize");
 
 const JWT_SECRET = process.env.JWT_SECRET || "fitme_secret"; // bí mật server, nên đặt trong .env
 
@@ -11,6 +12,7 @@ exports.register = async (req, res) => {
   try {
     const {
       username,
+      email,
       password,
       first_name,
       last_name,
@@ -20,10 +22,28 @@ exports.register = async (req, res) => {
       birthday,
     } = req.body;
 
+    const normalizedUsername = (username || "").trim();
+    const normalizedEmail = (email || "").trim().toLowerCase();
+
+    if (!normalizedUsername || !normalizedEmail || !password) {
+      return res
+        .status(400)
+        .json({ message: "Vui lòng nhập username, email và password" });
+    }
+
     // 1️⃣ Kiểm tra username đã tồn tại chưa
-    const existingUser = await User.findOne({ where: { username } });
-    if (existingUser) {
+    const existingByUsername = await User.findOne({
+      where: { username: normalizedUsername },
+    });
+    if (existingByUsername) {
       return res.status(400).json({ message: "Username đã tồn tại!" });
+    }
+
+    const existingByEmail = await User.findOne({
+      where: { email: normalizedEmail },
+    });
+    if (existingByEmail) {
+      return res.status(400).json({ message: "Email đã tồn tại!" });
     }
 
     // 2️⃣ Hash password
@@ -31,7 +51,8 @@ exports.register = async (req, res) => {
 
     // 3️⃣ Tạo user mới
     const newUser = await User.create({
-      username,
+      username: normalizedUsername,
+      email: normalizedEmail,
       password: hashedPassword,
       first_name,
       last_name,
@@ -49,7 +70,11 @@ exports.register = async (req, res) => {
     // 5️⃣ Trả response thành công
     res.status(201).json({
       message: "Đăng ký thành công!",
-      user: { uuid: newUser.uuid, username: newUser.username },
+      user: {
+        uuid: newUser.uuid,
+        username: newUser.username,
+        email: newUser.email,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -60,22 +85,33 @@ exports.register = async (req, res) => {
 // Hàm login với JWT
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { identifier, email, username, password } = req.body;
+    const loginIdentifier = (identifier || email || username || "").trim();
+    const emailIdentifier = loginIdentifier.toLowerCase();
 
-    if (!username || !password)
+    if (!loginIdentifier || !password)
       return res
         .status(400)
-        .json({ message: "Vui lòng nhập username và password" });
+        .json({ message: "Vui lòng nhập email/username và password" });
 
     // 1️⃣ Tìm user
-    const user = await User.findOne({ where: { username } });
+    const user = await User.findOne({
+      where: {
+        [Op.or]: [{ username: loginIdentifier }, { email: emailIdentifier }],
+      },
+    });
+
     if (!user)
-      return res.status(401).json({ message: "Username hoặc password sai" });
+      return res
+        .status(401)
+        .json({ message: "Email/username hoặc password sai" });
 
     // 2️⃣ So sánh password
     const match = await bcrypt.compare(password, user.password);
     if (!match)
-      return res.status(401).json({ message: "Username hoặc password sai" });
+      return res
+        .status(401)
+        .json({ message: "Email/username hoặc password sai" });
 
     // 3️⃣ Xác định role
     let role = "customer";
@@ -116,5 +152,36 @@ exports.login = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Lỗi server" });
+  }
+};
+
+// Trả về thông tin user hiện tại từ JWT cookie
+exports.me = async (req, res) => {
+  try {
+    const token = req.cookies?.fitme_auth;
+    if (!token) {
+      return res.status(401).json({ message: "Chua dang nhap" });
+    }
+
+    const payload = jwt.verify(token, JWT_SECRET);
+
+    const user = await User.findByPk(payload.uuid, {
+      attributes: ["uuid", "username", "email"],
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: "Token khong hop le" });
+    }
+
+    return res.status(200).json({
+      user: {
+        uuid: user.uuid,
+        username: user.username,
+        email: user.email,
+        role: payload.role || "customer",
+      },
+    });
+  } catch (error) {
+    return res.status(401).json({ message: "Phien dang nhap het han" });
   }
 };

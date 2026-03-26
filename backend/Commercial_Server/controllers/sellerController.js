@@ -70,3 +70,39 @@ exports.registerSeller = async (req, res) => {
     res.status(500).json({ message: "Lỗi server" });
   }
 };
+
+// Lấy thông tin shop hiện tại
+exports.getCurrentSeller = async (req, res) => {
+  try {
+    const token = req.cookies?.fitme_auth;
+    if (!token) return res.status(401).json({ message: "Chưa đăng nhập" });
+
+    let payload;
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch {
+      return res
+        .status(401)
+        .json({ message: "JWT không hợp lệ hoặc đã hết hạn" });
+    }
+
+    const { uuid: user_uuid } = payload;
+    const seller = await Seller.findOne({ where: { user_uuid } });
+
+    if (!seller) {
+      return res.status(404).json({ message: "Chưa tìm thấy thông tin shop" });
+    }
+
+    return res.status(200).json({
+      seller: {
+        user_uuid: seller.user_uuid,
+        shop_name: seller.shop_name,
+        shop_description: seller.shop_description,
+        joined_at: seller.joined_at,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Lỗi server" });
+  }
+};

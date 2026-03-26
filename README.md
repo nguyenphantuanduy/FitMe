@@ -1,4 +1,4 @@
-# Project Name
+# VirtualTryMe - FabUric
 
 ## Mục đích
 
@@ -58,15 +58,97 @@ sudo apt install -y libgl1
 
 > Commercial Server sẽ chạy ở chế độ phát triển và kết nối với AI_Server.
 
-## Bước 6: Chạy Frontend
+Rất hợp lý. Nếu bạn muốn đẩy riêng frontend lên Git sạch và dễ cho người khác chạy, thì nên làm 2 thứ:
 
-1. Mở terminal mới và vào thư mục frontend:
-   cd frontend
+1. README rõ ràng, có thể chạy ngay  
+2. Gitignore đủ chặt để không lộ file rác, secret, build output
 
-2. Cài các dependencies nếu chưa có:
-   npm install
+Dưới đây là mẫu thực tế bạn có thể dùng luôn.
 
-3. Chạy frontend:
-   npm run dev
+**README mẫu (cho frontend React + Vite)**
 
-> Frontend sẽ chạy ở chế độ phát triển, kết nối với Commercial Server và AI_Server.
+```md
+## FitMe Frontend
+
+Frontend cho hệ thống FitMe, xây dựng bằng React + Vite.
+
+### 1. Yêu cầu môi trường
+
+- Node.js >= 18
+- npm >= 9
+
+### 2. Cài đặt
+
+```bash
+npm install
+```
+
+### 3. Chạy local
+
+```bash
+npm run dev
+```
+
+Mặc định app chạy tại:
+
+- http://localhost:5173
+
+### 4. Build production
+
+```bash
+npm run build
+```
+
+Kết quả nằm trong thư mục `dist`.
+
+### 5. Preview bản build
+
+```bash
+npm run preview
+```
+
+### 6. Biến môi trường
+
+Tạo file `.env` từ `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Ví dụ `.env.example`:
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+VITE_AI_BASE_URL=http://localhost:8000
+```
+
+### 7. Scripts chính
+
+- `npm run dev`: chạy local development
+- `npm run build`: build production
+- `npm run preview`: preview sau build
+- `npm run lint`: kiểm tra lint (nếu có)
+
+### 8. Cấu trúc thư mục chính
+
+- `src/pages`: các page
+- `src/components`: UI components
+- `src/pages/auth`: login/register/forgot/reset
+- `src/pages/customer`: customer dashboard
+- `src/pages/seller`: seller dashboard + seller flow
+- `src/pages/tryOnApp`: virtual try-on
+
+### 9. Troubleshooting
+
+#### Lỗi không gọi được backend
+
+- Kiểm tra backend đang chạy ở đúng port
+- Kiểm tra CORS backend có cho origin frontend
+- Kiểm tra đúng URL trong `.env`
+
+#### Lỗi font/CSS import
+
+- Restart dev server:
+```bash
+npm run dev
+```

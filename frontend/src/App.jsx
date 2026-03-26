@@ -8,16 +8,17 @@ import {
 import axios from "axios";
 
 // Pages
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import CustomerDashboard from "./pages/CustomerDashboard";
-import SellerDashboard from "./pages/SellerDashboard";
-import RegisterSeller from "./pages/RegisterSeller";
-import UploadProductDashboard from "./pages/UploadProductDashboard";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import RegisterSeller from "./pages/seller/RegisterSeller";
+import UploadProductDashboard from "./pages/seller/UploadProductDashboard";
 
 // ⭐ NEW
-import VirtualTryOn from "./pages/VirtualTryOn";
+import VirtualTryOn from "./pages/tryOnApp/VirtualTryOn";
 
 function App() {
   const [userRole, setUserRole] = useState(null);
@@ -59,15 +60,25 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Home */}
-        <Route path="/" element={<Home />} />
+        {/* Root redirect */}
+        <Route
+          path="/"
+          element={
+            loading ? (
+              <div>Loading...</div>
+            ) : userRole ? (
+              <Navigate to="/customer-dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
 
         {/* Login / Register */}
-
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
-
-        <Route path="/register" element={<Register />} />
-
+        <Route path="/signup" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Customer Dashboard */}
 
         <Route
