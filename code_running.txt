@@ -8,7 +8,7 @@ python3 -m venv venv
 source venv/bin/activate
 apt install -y libgl1
 pip install --upgrade pip
-cd fashn_vton_1_5
+cd backend/AI_Server/fashn_vton_1_5
 pip install -e .
 cd ..
 python backend/AI_Server/fashn_vton_1_5/scripts/download_weights.py --weights-dir ./weights/fashn_vton_weights
