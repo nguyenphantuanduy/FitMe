@@ -310,7 +310,7 @@ function VirtualTryOnAdvanced() {
   };
 
   // =========================
-  // SELECT
+  // SELECT & RESET
   // =========================
   const handleSelect = (p, type) => {
     if (type === "tops") setSelectedTop(p);
@@ -321,6 +321,24 @@ function VirtualTryOnAdvanced() {
     setShowBottoms(false);
     setShowOnePieces(false);
     setStatusMessage("Da chon san pham. Ban co the bat dau Try-On.");
+  };
+
+  const resetSelection = (type) => {
+    if (type === "tops") {
+      setSelectedTop(null);
+      setShowTops(false);
+      setStatusMessage("Da reset top.");
+    }
+    if (type === "bottoms") {
+      setSelectedBottom(null);
+      setShowBottoms(false);
+      setStatusMessage("Da reset bottom.");
+    }
+    if (type === "one-pieces") {
+      setSelectedOnePiece(null);
+      setShowOnePieces(false);
+      setStatusMessage("Da reset one-piece.");
+    }
   };
 
   // =========================
@@ -511,92 +529,108 @@ function VirtualTryOnAdvanced() {
             <CardContent className="h-160 overflow-y-auto p-4 sm:p-5">
               <h2 className="mb-4 font-serif text-xl">Choose Garments</h2>
 
+              {/* TOPS */}
               <div className="mb-5">
                 <div className="mb-2 flex items-center justify-between">
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-600">
                     Tops
                   </h3>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fetchProducts("tops")}
-                  >
-                    Choose
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fetchProducts("tops")}
+                    >
+                      Choose
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => resetSelection("tops")}
+                    >
+                      Reset
+                    </Button>
+                  </div>
                 </div>
-                {selectedTop ? (
+                {selectedTop && (
                   <img
                     src={selectedTop.front_img}
                     alt={selectedTop.name || "Selected top"}
                     className="h-24 w-full rounded-lg border border-zinc-200 object-cover"
                   />
-                ) : null}
+                )}
                 {showTops && renderSelector(tops, "tops")}
               </div>
 
+              {/* BOTTOMS */}
               <div className="mb-5">
                 <div className="mb-2 flex items-center justify-between">
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-600">
                     Bottoms
                   </h3>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fetchProducts("bottoms")}
-                  >
-                    Choose
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fetchProducts("bottoms")}
+                    >
+                      Choose
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => resetSelection("bottoms")}
+                    >
+                      Reset
+                    </Button>
+                  </div>
                 </div>
-                {selectedBottom ? (
+                {selectedBottom && (
                   <img
                     src={selectedBottom.front_img}
                     alt={selectedBottom.name || "Selected bottom"}
                     className="h-24 w-full rounded-lg border border-zinc-200 object-cover"
                   />
-                ) : null}
+                )}
                 {showBottoms && renderSelector(bottoms, "bottoms")}
               </div>
 
+              {/* ONE-PIECE */}
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-600">
                     One-Piece
                   </h3>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fetchProducts("one-pieces")}
-                  >
-                    Choose
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fetchProducts("one-pieces")}
+                    >
+                      Choose
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => resetSelection("one-pieces")}
+                    >
+                      Reset
+                    </Button>
+                  </div>
                 </div>
-                {selectedOnePiece ? (
+                {selectedOnePiece && (
                   <img
                     src={selectedOnePiece.front_img}
                     alt={selectedOnePiece.name || "Selected one-piece"}
                     className="h-24 w-full rounded-lg border border-zinc-200 object-cover"
                   />
-                ) : null}
+                )}
                 {showOnePieces && renderSelector(onePieces, "one-pieces")}
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-
-      {/* SCAN CSS + SHIMMER */}
-      <style>
-        {`
-        @keyframes scanMove {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100%); }
-        }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        `}
-      </style>
     </div>
   );
 }
