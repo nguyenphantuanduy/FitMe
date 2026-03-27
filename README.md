@@ -36,7 +36,7 @@ sudo apt install -y libgl1
    python backend/AI_Server/fashn_vton_1_5/scripts/download_weights.py --weights-dir ./weights/fashn_vton_weights
 
 5. Chạy AI server:
-   uvicorn backend.AI_Server.ai_server:app --reload --host 0.0.0.0 --port 8000
+   uvicorn backend.AI_Server.ai_server:app --host 0.0.0.0 --port 8000
 
 > Khi server chạy, bạn có thể truy cập API tại http://localhost:8000
 
@@ -60,14 +60,14 @@ sudo apt install -y libgl1
 
 Rất hợp lý. Nếu bạn muốn đẩy riêng frontend lên Git sạch và dễ cho người khác chạy, thì nên làm 2 thứ:
 
-1. README rõ ràng, có thể chạy ngay  
+1. README rõ ràng, có thể chạy ngay
 2. Gitignore đủ chặt để không lộ file rác, secret, build output
 
 Dưới đây là mẫu thực tế bạn có thể dùng luôn.
 
 **README mẫu (cho frontend React + Vite)**
 
-```md
+````md
 ## FitMe Frontend
 
 Frontend cho hệ thống FitMe, xây dựng bằng React + Vite.
@@ -82,6 +82,7 @@ Frontend cho hệ thống FitMe, xây dựng bằng React + Vite.
 ```bash
 npm install
 ```
+````
 
 ### 3. Chạy local
 
@@ -149,6 +150,7 @@ VITE_AI_BASE_URL=http://localhost:8000
 #### Lỗi font/CSS import
 
 - Restart dev server:
+
 ```bash
 npm run dev
 ```

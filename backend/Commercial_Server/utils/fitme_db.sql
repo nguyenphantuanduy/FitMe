@@ -1,3 +1,16 @@
+-- Drop bảng con trước
+DROP TABLE IF EXISTS product CASCADE;
+DROP TABLE IF EXISTS customer CASCADE;
+DROP TABLE IF EXISTS seller CASCADE;
+
+-- Drop bảng chính
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Drop ENUM type
+DROP TYPE IF EXISTS product_type;
+
+-- Drop extension (không bắt buộc, thường giữ lại)
+-- DROP EXTENSION IF EXISTS "pgcrypto";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TYPE product_type AS ENUM ('tops', 'bottoms', 'one-pieces');
 CREATE TABLE users (
