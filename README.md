@@ -130,3 +130,163 @@ FitMe/
 ├── docker/                        # Docker configuration
 │
 ├── README.md                      # Project documentation
+```
+
+# ⚙️ Installation Guide
+
+This section explains how to run the full system locally.
+
+---
+
+## 🧪 Step 1 — Create Virtual Environment
+
+Create Python virtual environment:
+
+```bash
+python -m venv venv
+```
+Activate environment:
+
+Linux / Mac
+```bash
+source venv/bin/activate
+```
+Windows
+```bash
+venv\Scripts\activate
+```
+## 🧩 Step 2 — Install System Dependencies (Linux Only)
+sudo apt update
+sudo apt install -y libgl1
+## 🤖 Step 3 — Setup AI Server
+
+Go to AI Server directory:
+
+```bash
+cd backend/AI_Server/
+cd fashn_vton_1_5
+```
+
+Install local library:
+
+```bash
+pip install -e .
+```
+
+Install remaining dependencies:
+
+```bash
+cd ..
+pip install -r requirements.txt
+cd ../..
+```
+
+Download pretrained weights:
+
+```bash
+python backend/AI_Server/fashn_vton_1_5/scripts/download_weights.py \
+--weights-dir ./weights/fashn_vton_weights
+```
+
+Run AI server:
+
+```bash
+uvicorn backend.AI_Server.ai_server:app \
+--host 0.0.0.0 \
+--port 8000
+```
+AI Server runs at:
+http://localhost:8000
+## 🛒 Step 4 — Run Commercial Server (Node.js)
+
+Open a new terminal.
+
+Install nodemon globally:
+
+npm install -g nodemon
+
+Go to Commercial Server:
+
+cd backend/Commercial_Server
+
+Install dependencies:
+
+npm install
+
+Run server:
+
+npm run dev
+🎨 Step 5 — Run Frontend (React)
+
+Open another terminal:
+
+cd frontend
+
+Install dependencies:
+
+npm install
+
+Run frontend:
+
+npm run dev
+
+Frontend runs at:
+
+http://localhost:5173
+🔐 Authentication
+
+The system uses:
+
+Cookie-based authentication
+JWT tokens
+bcrypt password hashing
+
+Used for:
+
+User login
+Seller login
+Secure API communication
+🧪 Example Workflow
+
+Typical system workflow:
+
+User registers an account
+Seller uploads clothing products
+User logs in
+User selects clothing
+User enters Virtual Try-On Room
+User performs pose
+AI Server generates try-on result
+Result is displayed on UI
+📊 Dataset Information
+
+Custom dataset used for EfficientNet-B1 training.
+
+Dataset details:
+
+Total images: ~5000
+Source: Merged YOLO detection datasets
+Labels:
+Front
+Back
+
+Used for:
+
+User orientation classification
+Clothing type selection
+🧪 Deployment
+
+Tested deployment setup:
+
+AI Server deployed on Docker GPU environment
+Commercial Server running on localhost
+Frontend running on localhost
+📸 Demo (Add Screenshots Here)
+
+Recommended screenshots:
+
+Register Page
+Login Page
+Seller Upload Product
+Virtual Try-On Room
+Generated Try-On Result
