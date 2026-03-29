@@ -233,7 +233,8 @@ Run server:
 ```bash
 npm run dev
 ```
-
+Commercial Server runs at:
+http://localhost:3000
 ## 🎨 Step 5 — Run Frontend (React)
 
 Open another terminal:
@@ -255,8 +256,7 @@ npm run dev
 ```
 
 Frontend runs at:
-
-## http://localhost:5173
+http://localhost:5173
 
 # 🔐 Authentication
 
