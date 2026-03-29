@@ -208,46 +208,52 @@ http://localhost:8000
 
 ## 🛒 Step 4 — Run Commercial Server (Node.js)
 
-Open a new terminal.
+FitMe uses **PostgreSQL** as the database. Before running the Commercial Server, follow these steps:
 
-Install nodemon globally:
+### 1️⃣ Create PostgreSQL Database
+
+1. Make sure PostgreSQL is installed and running.
+2. Create a new database named `fitme_db`:
+
+```sql
+CREATE DATABASE fitme_db;
+```
+Open the provided fitme_db.sql file (located in the project root) and execute all queries to create tables and insert initial data.
+### 2️⃣ Configure Environment Variables
+
+Create a .env file in backend/Commercial_Server/ with the following content:
+```text
+DB_NAME=fitme_db
+DB_USER=postgres
+DB_PASSWORD=123456789
+DB_HOST=localhost
+PORT=3000
+```
+Make sure the credentials match your PostgreSQL setup.
+
+### 3️⃣ Install Dependencies
+
+Open a terminal and navigate to the Commercial Server:
+
+```bash
+cd backend/Commercial_Server
+npm install
+```
+(Optional) Install nodemon globally for auto-reload:
 
 ```bash
 npm install -g nodemon
 ```
+4️⃣ Run the Commercial Server
 
-Go to Commercial Server:
-
-```bash
-cd backend/Commercial_Server
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run server:
-
+Start the server:
 ```bash
 npm run dev
 ```
-Commercial Server runs at:
+The Commercial Server runs at:
 http://localhost:3000
-> **Database Configuration Note:**  
-> FitMe uses **PostgreSQL** as the database.  
-> Before running the Commercial Server, create a `.env` file in `backend/Commercial_Server/` with the following content:
->
-> ```env
-> DB_NAME=fitme_db
-> DB_USER=postgres
-> DB_PASSWORD=123456789
-> DB_HOST=localhost
-> PORT=3000
-> ```
->
-> Make sure PostgreSQL is running and that the database `fitme_db` exists (you can create it manually if needed).
+
+✅ At this point, your backend is connected to the PostgreSQL database and ready to serve requests from the frontend.
 ## 🎨 Step 5 — Run Frontend (React)
 
 Open another terminal:
