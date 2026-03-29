@@ -101,31 +101,32 @@ This helps select the correct clothing type.
 
 ## 📂 Project Structure
 
+```text
 FitMe/
 │
 ├── backend/
-│ │
-│ ├── AI_Server/
-│ │ ├── fashn_vton_1_5/
-│ │ ├── ai_server.py
-│ │ ├── requirements.txt
-│ │
-│ ├── Commercial_Server/
-│ │ ├── controllers/
-│ │ ├── routes/
-│ │ ├── middleware/
-│ │ ├── models/
+│   │
+│   ├── AI_Server/
+│   │   ├── fashn_vton_1_5/        # Virtual Try-On model package
+│   │   ├── ai_server.py           # FastAPI entry point
+│   │   ├── requirements.txt       # Python dependencies
+│   │
+│   ├── Commercial_Server/
+│   │   ├── controllers/           # Business logic handlers
+│   │   ├── routes/                # API route definitions
+│   │   ├── middleware/            # Authentication middleware
+│   │   ├── models/                # Database models
 │
 ├── frontend/
-│ ├── src/
-│ │ ├── pages/
-│ │ ├── components/
-│ │ ├── tryOnApp/
+│   ├── src/
+│   │   ├── pages/                 # Application pages
+│   │   ├── components/            # Reusable UI components
+│   │   ├── tryOnApp/              # Virtual Try-On module
 │
-├── weights/
+├── weights/                       # AI model weights
 │
-├── database/
+├── database/                      # Database schema / SQL files
 │
-├── docker/
+├── docker/                        # Docker configuration
 │
-├── README.md
+├── README.md                      # Project documentation
