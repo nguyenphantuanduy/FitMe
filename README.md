@@ -145,19 +145,26 @@ Create Python virtual environment:
 ```bash
 python -m venv venv
 ```
+
 Activate environment:
 
 Linux / Mac
+
 ```bash
 source venv/bin/activate
 ```
+
 Windows
+
 ```bash
 venv\Scripts\activate
 ```
+
 ## 🧩 Step 2 — Install System Dependencies (Linux Only)
+
 sudo apt update
 sudo apt install -y libgl1
+
 ## 🤖 Step 3 — Setup AI Server
 
 Go to AI Server directory:
@@ -195,8 +202,10 @@ uvicorn backend.AI_Server.ai_server:app \
 --host 0.0.0.0 \
 --port 8000
 ```
+
 AI Server runs at:
 http://localhost:8000
+
 ## 🛒 Step 4 — Run Commercial Server (Node.js)
 
 Open a new terminal.
@@ -218,11 +227,13 @@ Install dependencies:
 ```bash
 npm install
 ```
+
 Run server:
 
 ```bash
 npm run dev
 ```
+
 ## 🎨 Step 5 — Run Frontend (React)
 
 Open another terminal:
@@ -230,18 +241,22 @@ Open another terminal:
 ```bash
 cd frontend
 ```
+
 Install dependencies:
+
 ```bash
 npm install
 ```
+
 Run frontend:
+
 ```bash
 npm run dev
 ```
+
 Frontend runs at:
 
-http://localhost:5173
----
+## http://localhost:5173
 
 # 🔐 Authentication
 
@@ -255,9 +270,9 @@ The system implements secure authentication mechanisms to protect user data and 
 
 ## Applied For
 
-- User login authentication  
-- Seller login authentication  
-- Secure API communication between frontend and backend  
+- User login authentication
+- Seller login authentication
+- Secure API communication between frontend and backend
 
 ---
 
@@ -276,6 +291,7 @@ Below is a typical workflow demonstrating how users interact with the system.
 8. Virtual try-on result is generated
 9. Result is displayed on the user interface
 ```
+
 ---
 
 # 📊 Dataset Information
@@ -284,8 +300,8 @@ A custom dataset was created to train the **EfficientNet-B1** model for user ori
 
 ## Dataset Details
 
-- **Total images:** ~5000 images  
-- **Source:** Merged YOLO detection datasets  
+- **Total images:** ~5000 images
+- **Source:** Merged YOLO detection datasets
 - **Labels:**
   - **Front** — User facing forward
   - **Back** — User facing backward
@@ -294,9 +310,9 @@ A custom dataset was created to train the **EfficientNet-B1** model for user ori
 
 This dataset is used for:
 
-- User orientation classification  
-- Selecting correct clothing orientation (front/back)  
-- Improving virtual try-on accuracy  
+- User orientation classification
+- Selecting correct clothing orientation (front/back)
+- Improving virtual try-on accuracy
 
 ---
 
@@ -329,11 +345,16 @@ Screenshots help demonstrate system functionality and UI workflow.
 
 You should include:
 
-- Register Page  
-- Login Page  
-- Seller Upload Product Page  
-- Virtual Try-On Room  
-- Generated Try-On Result  
+- Register Page
+- Login Page
+- Seller Upload Product Page
+- Virtual Try-On Room
+- Generated Try-On Result
 
 ---
 
+## 📹 Demo Video
+
+Click the image below to watch the FitMe Virtual Try-On demo video:
+
+[![Watch the demo](demo_img.jpg)](https://drive.google.com/file/d/1YHWvmrEhMflyBosS6bR3oZYpq_rqWKoI/view?usp=sharing)
