@@ -235,6 +235,19 @@ npm run dev
 ```
 Commercial Server runs at:
 http://localhost:3000
+> **Database Configuration Note:**  
+> FitMe uses **PostgreSQL** as the database.  
+> Before running the Commercial Server, create a `.env` file in `backend/Commercial_Server/` with the following content:
+>
+> ```env
+> DB_NAME=fitme_db
+> DB_USER=postgres
+> DB_PASSWORD=123456789
+> DB_HOST=localhost
+> PORT=3000
+> ```
+>
+> Make sure PostgreSQL is running and that the database `fitme_db` exists (you can create it manually if needed).
 ## 🎨 Step 5 — Run Frontend (React)
 
 Open another terminal:
