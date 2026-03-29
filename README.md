@@ -357,7 +357,7 @@ You should include:
 - **Nguyen Phan Tuan Duy** – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
 - **Pham Duy Anh** –  – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
 
-GitHub Profiles (optional):  
+GitHub Profiles:  
 - [Nguyen Phan Tuan Duy](https://github.com/nguyenphantuanduy)  
 - [Pham Duy Anh](https://github.com/superiorhamster)  
 
