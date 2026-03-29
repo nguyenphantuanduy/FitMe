@@ -203,90 +203,137 @@ Open a new terminal.
 
 Install nodemon globally:
 
+```bash
 npm install -g nodemon
+```
 
 Go to Commercial Server:
 
+```bash
 cd backend/Commercial_Server
+```
 
 Install dependencies:
 
+```bash
 npm install
-
+```
 Run server:
 
+```bash
 npm run dev
-🎨 Step 5 — Run Frontend (React)
+```
+## 🎨 Step 5 — Run Frontend (React)
 
 Open another terminal:
 
+```bash
 cd frontend
-
+```
 Install dependencies:
-
+```bash
 npm install
-
+```
 Run frontend:
-
+```bash
 npm run dev
-
+```
 Frontend runs at:
 
 http://localhost:5173
-🔐 Authentication
+---
 
-The system uses:
+# 🔐 Authentication
 
-Cookie-based authentication
-JWT tokens
-bcrypt password hashing
+The system implements secure authentication mechanisms to protect user data and system access.
 
-Used for:
+## Security Methods Used
 
-User login
-Seller login
-Secure API communication
-🧪 Example Workflow
+- **Cookie-based authentication**
+- **JWT (JSON Web Token)**
+- **bcrypt password hashing**
 
-Typical system workflow:
+## Applied For
 
-User registers an account
-Seller uploads clothing products
-User logs in
-User selects clothing
-User enters Virtual Try-On Room
-User performs pose
-AI Server generates try-on result
-Result is displayed on UI
-📊 Dataset Information
+- User login authentication  
+- Seller login authentication  
+- Secure API communication between frontend and backend  
 
-Custom dataset used for EfficientNet-B1 training.
+---
 
-Dataset details:
+# 🧪 Example Workflow
 
-Total images: ~5000
-Source: Merged YOLO detection datasets
-Labels:
-Front
-Back
+Below is a typical workflow demonstrating how users interact with the system.
 
-Used for:
+```text
+1. User registers an account
+2. Seller uploads clothing products
+3. User logs into the system
+4. User selects desired clothing
+5. User enters the Virtual Try-On Room
+6. User performs body pose
+7. AI Server processes the input
+8. Virtual try-on result is generated
+9. Result is displayed on the user interface
+```
+---
 
-User orientation classification
-Clothing type selection
-🧪 Deployment
+# 📊 Dataset Information
 
-Tested deployment setup:
+A custom dataset was created to train the **EfficientNet-B1** model for user orientation classification.
 
-AI Server deployed on Docker GPU environment
-Commercial Server running on localhost
-Frontend running on localhost
-📸 Demo (Add Screenshots Here)
+## Dataset Details
 
-Recommended screenshots:
+- **Total images:** ~5000 images  
+- **Source:** Merged YOLO detection datasets  
+- **Labels:**
+  - **Front** — User facing forward
+  - **Back** — User facing backward
 
-Register Page
-Login Page
-Seller Upload Product
-Virtual Try-On Room
-Generated Try-On Result
+## Dataset Usage
+
+This dataset is used for:
+
+- User orientation classification  
+- Selecting correct clothing orientation (front/back)  
+- Improving virtual try-on accuracy  
+
+---
+
+# 🧪 Deployment
+
+The system has been tested using a hybrid deployment setup.
+
+## Deployment Environment
+
+- 🤖 **AI Server**
+  - Deployed using **Docker**
+  - GPU-enabled environment
+  - Handles AI inference and virtual try-on processing
+
+- 🛒 **Commercial Server**
+  - Running on **localhost**
+  - Handles authentication, product management, and API logic
+
+- 🎨 **Frontend**
+  - Running on **localhost**
+  - Provides user interface for try-on interaction
+
+---
+
+# 📸 Demo (Screenshots)
+
+Screenshots help demonstrate system functionality and UI workflow.
+
+## Recommended Screenshots
+
+You should include:
+
+- Register Page  
+- Login Page  
+- Seller Upload Product Page  
+- Virtual Try-On Room  
+- Generated Try-On Result  
+
+---
+
