@@ -352,9 +352,30 @@ You should include:
 - Generated Try-On Result
 
 ---
+# 👨‍💻 Authors
 
-## 📹 Demo Video
+- **Nguyen Phan Tuan Duy** – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
+- **Pham Duy Anh** –  – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
 
-Click the image below to watch the FitMe Virtual Try-On demo video:
+GitHub Profiles (optional):  
+- [Nguyen Phan Tuan Duy](https://github.com/nguyenphantuanduy)  
+- [Pham Duy Anh](https://github.com/superiorhamster)  
 
-[![Watch the demo](demo_img.jpg)](https://drive.google.com/file/d/1YHWvmrEhMflyBosS6bR3oZYpq_rqWKoI/view?usp=sharing)
+---
+
+# 📄 License / Citation
+
+This project incorporates the **FASHN VTON v1.5** model.  
+
+> ⚠️ **Important:** The FASHN VTON v1.5 authors require proper citation if you use their model in your research.
+
+### How to Cite FASHN VTON v1.5:
+
+```bibtex
+@article{bochman2026fashnvton,
+  title={FASHN VTON v1.5: Efficient Maskless Virtual Try-On in Pixel Space},
+  author={Bochman, Dan and Bochman, Aya},
+  journal={arXiv preprint},
+  year={2026},
+  note={Paper coming soon}
+}
