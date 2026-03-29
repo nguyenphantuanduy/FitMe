@@ -1,156 +1,131 @@
-# VirtualTryMe - FabUric
+# 👗 FitMe – AI-Powered Virtual Try-On E-Commerce System
 
-## Mục đích
+FitMe is a hybrid web-based e-commerce simulation system integrated with artificial intelligence, designed to provide a virtual fitting room experience for online fashion shopping.
 
-Hướng dẫn thiết lập môi trường ảo và chạy các server + frontend của dự án.
+The system allows users to browse clothing uploaded by sellers, select desired outfits, and enter a Virtual Try-On Room where AI models generate realistic try-on results based on user poses. Users can visualize clothing from multiple viewing angles such as front view, side view, and back view.
 
-## Bước 1: Thiết lập và kích hoạt môi trường ảo
+FitMe addresses common challenges in online fashion shopping.
 
-1. Tạo môi trường ảo:
-   python -m venv venv
+- For users: reduces uncertainty when selecting clothing without physical trials.
+- For sellers: helps reduce return rates and increases customer confidence.
+- For businesses: enhances product visualization and shopping experience.
 
-2. Kích hoạt môi trường ảo:
-   source venv/bin/activate
+Technically, FitMe is built as a hybrid system consisting of:
 
-## Bước 3: Cài đặt các thư viện hệ thống cần thiết
+- 🤖 AI Server (Python + FastAPI)
+- 🛒 Commercial Backend (Node.js)
+- 🎨 Frontend (React.js)
+- 🗄️ Database (PostgreSQL)
 
-Trên Linux, bạn có thể cần cài thêm thư viện OpenGL:
-sudo apt update
-sudo apt install -y libgl1
+The AI module integrates pretrained and fine-tuned deep learning models to generate virtual try-on results and determine user orientation.
 
-## Bước 4: Cài đặt các thư viện của AI_Server và chạy server
+---
 
-1. Đi tới thư mục AI_Server:
-   cd backend/AI_Server/
-   cd fashn_vton_1_5
+# 🚀 Features
 
-2. Cài đặt thư viện local:
-   pip install -e .
+## 👤 User Features
 
-3. Quay về thư mục AI_Server và cài các requirements còn lại:
-   cd ..
-   pip install -r requirements.txt
-   cd ../..
+- Register user account
+- Login authentication
+- Browse clothing products
+- Enter Virtual Try-On Room
+- Perform pose-based virtual try-on
+- View clothing results from different angles
 
-4. Tải trọng số (weights) cần thiết:
-   python backend/AI_Server/fashn_vton_1_5/scripts/download_weights.py --weights-dir ./weights/fashn_vton_weights
+## 🛍️ Seller Features
 
-5. Chạy AI server:
-   uvicorn backend.AI_Server.ai_server:app --host 0.0.0.0 --port 8000
+- Register seller account
+- Login authentication
+- Upload clothing products
+- Manage product catalog
 
-> Khi server chạy, bạn có thể truy cập API tại http://localhost:8000
+## 🤖 AI Features
 
-## Bước 5: Chạy Commercial Server (Node.js)
+- Virtual Try-On image generation
+- Pose-based clothing orientation detection
+- Multi-angle clothing visualization
+- AI inference via FastAPI server
 
-1. Mở terminal mới, đảm bảo Node.js đã được cài.
+---
 
-2. Cài Nodemon toàn cục (nếu chưa có):
-   npm install -g nodemon
+# 🧠 AI Models
 
-3. Vào thư mục Commercial_Server:
-   cd backend/Commercial_Server
+## 1️⃣ FASHN-VTON 1.5 (Pretrained)
 
-4. Cài các dependencies của dự án:
-   npm install
+**Purpose**
 
-5. Chạy server:
-   npm run dev
+- Generate virtual try-on results
+- Combine user image and clothing image
 
-> Commercial Server sẽ chạy ở chế độ phát triển và kết nối với AI_Server.
+**Input**
 
-Rất hợp lý. Nếu bạn muốn đẩy riêng frontend lên Git sạch và dễ cho người khác chạy, thì nên làm 2 thứ:
+- Person image
+- Clothing image
 
-1. README rõ ràng, có thể chạy ngay
-2. Gitignore đủ chặt để không lộ file rác, secret, build output
+**Output**
 
-Dưới đây là mẫu thực tế bạn có thể dùng luôn.
+- Virtual try-on generated image
 
-**README mẫu (cho frontend React + Vite)**
+**Training**
 
-````md
-## FitMe Frontend
+- Pretrained model
+- Used directly without retraining
 
-Frontend cho hệ thống FitMe, xây dựng bằng React + Vite.
+---
 
-### 1. Yêu cầu môi trường
+## 2️⃣ EfficientNet-B1 (Fine-Tuned)
 
-- Node.js >= 18
-- npm >= 9
+**Purpose**
 
-### 2. Cài đặt
+- Classify user orientation:
+  - Front
+  - Back
 
-```bash
-npm install
-```
-````
+This helps select the correct clothing type.
 
-### 3. Chạy local
+**Architecture**
 
-```bash
-npm run dev
-```
+- Backbone: Pretrained EfficientNet-B1
+- Custom classification head
 
-Mặc định app chạy tại:
+**Training Details**
 
-- http://localhost:5173
+- Custom dataset (~5000 images)
+- Dataset created by merging YOLO detection datasets
+- Manual labeling applied
+- Fine-tuned for classification task
 
-### 4. Build production
+---
 
-```bash
-npm run build
-```
+# 🏗️ System Architecture
 
-Kết quả nằm trong thư mục `dist`.
+## 📂 Project Structure
 
-### 5. Preview bản build
-
-```bash
-npm run preview
-```
-
-### 6. Biến môi trường
-
-Tạo file `.env` từ `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
-Ví dụ `.env.example`:
-
-```env
-VITE_API_BASE_URL=http://localhost:3000
-VITE_AI_BASE_URL=http://localhost:8000
-```
-
-### 7. Scripts chính
-
-- `npm run dev`: chạy local development
-- `npm run build`: build production
-- `npm run preview`: preview sau build
-- `npm run lint`: kiểm tra lint (nếu có)
-
-### 8. Cấu trúc thư mục chính
-
-- `src/pages`: các page
-- `src/components`: UI components
-- `src/pages/auth`: login/register/forgot/reset
-- `src/pages/customer`: customer dashboard
-- `src/pages/seller`: seller dashboard + seller flow
-- `src/pages/tryOnApp`: virtual try-on
-
-### 9. Troubleshooting
-
-#### Lỗi không gọi được backend
-
-- Kiểm tra backend đang chạy ở đúng port
-- Kiểm tra CORS backend có cho origin frontend
-- Kiểm tra đúng URL trong `.env`
-
-#### Lỗi font/CSS import
-
-- Restart dev server:
-
-```bash
-npm run dev
-```
+FitMe/
+│
+├── backend/
+│ │
+│ ├── AI_Server/
+│ │ ├── fashn_vton_1_5/
+│ │ ├── ai_server.py
+│ │ ├── requirements.txt
+│ │
+│ ├── Commercial_Server/
+│ │ ├── controllers/
+│ │ ├── routes/
+│ │ ├── middleware/
+│ │ ├── models/
+│
+├── frontend/
+│ ├── src/
+│ │ ├── pages/
+│ │ ├── components/
+│ │ ├── tryOnApp/
+│
+├── weights/
+│
+├── database/
+│
+├── docker/
+│
+├── README.md
