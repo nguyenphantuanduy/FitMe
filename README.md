@@ -355,7 +355,7 @@ You should include:
 # 👨‍💻 Authors
 
 - **Nguyen Phan Tuan Duy** – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
-- **Pham Duy Anh** –  – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
+- **Pham Duy Anh** – Computer Science Student, Ho Chi Minh City University of Technology (HCMUT)  
 
 GitHub Profiles:  
 - [Nguyen Phan Tuan Duy](https://github.com/nguyenphantuanduy)  
